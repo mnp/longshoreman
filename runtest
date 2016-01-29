@@ -1,0 +1,10 @@
+#!/bin/bash
+
+./maketest || exit 1
+
+cd test/dockerthing
+
+../../longshoreman build --rm=true -t longshoreman-test . \
+    && docker run -it longshoreman-test \
+    && docker rmi -f longshoreman-test \
+    && echo && echo finished

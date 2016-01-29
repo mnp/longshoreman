@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Make a test tree with four cases to check, then we'll pack it up in
+# a dockerfile.
+mkdir test test/linktargets test/dockerthing test/dockerthing/subdir
+
+# 1. symlink in docker dir
+echo this is case 1 > test/linktargets/case1
+ln -s ../linktargets/case1 test/dockerthing/case1
+
+# 2. symlink in docker subdir
+echo this is case 2 > test/linktargets/case2
+ln -s ../../linktargets/case2 test/dockerthing/subdir/case2
+
+# 3. plain file in docker dir
+echo this is case 3 > test/dockerthing/case3
+
+# 4. plain file in docker subdir
+echo this is case 4 > test/dockerthing/subdir/case4
+
+cat > test/dockerthing/Dockerfile << EOF
+FROM busybox
+RUN mkdir /dest
+
+# case 1
+ADD case1 /dest/
+
+# case 3
+ADD case3 /dest/
+
+# cases 2 and 4
+ADD subdir /dest/subdir
+
+CMD ls -lR /dest
+EOF
+

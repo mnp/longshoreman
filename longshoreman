@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# longshoreman - Schleps symbolic link contents for dockerfile ADD and COPY.
+#
+# USAGE:
+#    longshoreman [docker args] build [more docker args]
+#
+# EXAMPLE:
+#    cd dir_with_dockerfile
+#    longshoreman build -t foo .
+#    docker run -it foo
+#
+# DETAILS:
+#    Docker will not COPY or ADD files named by symbolic links, because
+#    doing so would allow an unrepeatable process.  But sometimes that's
+#    what you want.  The name is long to make you consider what you're doing.
+#    
+#    This is a simple script that does the simplest thing that would
+#    possibly work: make a temp dir, make a hardlink tree of everything in
+#    ., run the docker command in the context of that temp dir, then clean
+#    up.
+#    
+#    This does not attempt to parse the docker command line or dockerfile.
+
+
+prog=$(basename $0)
+tmp=$(mktemp -d -t $prog)
+if [ $? -ne 0 ]; then
+    echo "$prog: Can't create temp dir, exiting..."
+    exit 1
+fi
+
+trap 'rm -rf "$tmp"; exit 1' 1 2 3 13 15
+trap 'rm -rf "$tmp"' 0
+
+echo Longshoreman at work in $tmp
+
+find . -type d -not -name . -exec mkdir $tmp/{} \;
+find . -type l              -exec cp {} $tmp/{} \;
+find . -type f              -exec ln {} $tmp/{} \;
+
+cd $tmp
+docker $@
