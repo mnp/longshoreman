@@ -2,7 +2,7 @@
 Schleps symbolic link contents for dockerfile ADD and COPY
 
 ## Usage
-Copy the '''longshoreman''' script to your PATH.  Then, just use it instead of your '''docker build''' command. 
+Copy the `longshoreman` script to your PATH.  Then, just use it instead of your `docker build` command. 
 
     longshoreman [docker args] build [more docker args]
 
@@ -18,7 +18,7 @@ what you want.  The name is long to make you consider what you're doing.
 
 This is a simple script that does the simplest thing that would
 possibly work: make a temp dir, make a hardlink tree of everything in
-., run the docker command in the context of that temp dir, then clean
+`.`, run the docker command in the context of that temp dir, then clean
 up.
 
 This does not attempt to parse the docker command line or dockerfile.
@@ -27,5 +27,9 @@ Issues/PR's welcome.
 
 ## Meta
 
-* '''maketest''' creates a ./test directory with symlinks and a Dockerfile that tries to use them.
-* '''runtest''' calls '''maketest''' using '''longshoreman'''.
+* `maketest` creates a ./test directory with symlinks and a Dockerfile that tries to use them.
+* `runtest` calls `maketest` using `longshoreman`.
+
+## License
+
+MIT, see LICENSE file.
